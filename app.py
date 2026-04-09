@@ -27,7 +27,6 @@ def home():
 
 # ⚠️ TEMP LOCAL DB (will change later)
 DATABASE_URL = "postgresql://postgres:Srujananirudh8@db.ddojoxpahvbchydnwfqc.supabase.co:5432/postgres"
-
 engine = create_engine(
     DATABASE_URL,
     connect_args={"sslmode": "require"}
