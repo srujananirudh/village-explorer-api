@@ -103,3 +103,12 @@ def villages(state: str, district: str, mandal: str, auth=Depends(verify_api_key
             'SELECT DISTINCT "VILLAGE" FROM locations WHERE "STATE" ILIKE :s AND "DISTRICT" ILIKE :d AND "MANDAL" ILIKE :m'
         ), {"s": f"%{state}%", "d": f"%{district}%", "m": f"%{mandal}%"})
         return {"villages": [r[0] for r in res]}
+
+@app.get("/test-db")
+def test_db():
+    try:
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT 1"))
+            return {"status": "DB Connected"}
+    except Exception as e:
+        return {"error": str(e)}
