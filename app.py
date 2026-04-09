@@ -4,8 +4,14 @@ from sqlalchemy import create_engine, text
 from pydantic import BaseModel
 import uuid
 
-app = FastAPI()
+# ✅ CREATE ONLY ONE APP
+app = FastAPI(
+    title="Village API",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
 
+# ✅ CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,24 +20,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ✅ ROOT ROUTE
+@app.get("/")
+def home():
+    return {"message": "API running 🚀"}
+
+# ⚠️ TEMP LOCAL DB (will change later)
 DATABASE_URL = "postgresql://postgres:Srujananirudh8@localhost:5432/India_location"
 engine = create_engine(DATABASE_URL)
 
+# ✅ USER MODEL
 class User(BaseModel):
     email: str
     password: str
 
+# ✅ TEMP MEMORY STORAGE
 users = {}
 
+# ✅ API KEY GENERATION
 def generate_api_key():
     return "ak_live_" + uuid.uuid4().hex[:24]
 
+# ✅ API KEY VALIDATION
 def verify_api_key(x_api_key: str = Header(None)):
     for u in users.values():
         if u["api_key"] == x_api_key:
             return True
     raise HTTPException(status_code=401, detail="Invalid API key")
 
+# ✅ SIGNUP
 @app.post("/signup")
 def signup(user: User):
     if user.email in users:
@@ -42,6 +59,7 @@ def signup(user: User):
 
     return {"message": "Account created"}
 
+# ✅ LOGIN
 @app.post("/login")
 def login(user: User):
     if user.email not in users:
@@ -52,12 +70,14 @@ def login(user: User):
 
     return {"api_key": users[user.email]["api_key"]}
 
+# ✅ STATES
 @app.get("/states")
 def states(auth=Depends(verify_api_key)):
     with engine.connect() as conn:
         res = conn.execute(text('SELECT DISTINCT "STATE" FROM locations ORDER BY "STATE";'))
         return {"states": [r[0] for r in res]}
 
+# ✅ DISTRICTS
 @app.get("/districts")
 def districts(state: str, auth=Depends(verify_api_key)):
     with engine.connect() as conn:
@@ -66,6 +86,7 @@ def districts(state: str, auth=Depends(verify_api_key)):
         ), {"s": f"%{state}%"})
         return {"districts": [r[0] for r in res]}
 
+# ✅ MANDALS
 @app.get("/mandals")
 def mandals(state: str, district: str, auth=Depends(verify_api_key)):
     with engine.connect() as conn:
@@ -74,6 +95,7 @@ def mandals(state: str, district: str, auth=Depends(verify_api_key)):
         ), {"s": f"%{state}%", "d": f"%{district}%"})
         return {"mandals": [r[0] for r in res]}
 
+# ✅ VILLAGES
 @app.get("/villages")
 def villages(state: str, district: str, mandal: str, auth=Depends(verify_api_key)):
     with engine.connect() as conn:
