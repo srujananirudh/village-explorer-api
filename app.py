@@ -29,6 +29,9 @@ def home():
 DATABASE_URL = "postgresql://postgres:Srujananirudh8@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres?sslmode=require"
 
 engine = create_engine(DATABASE_URL)
+conn = engine.connect()
+print("Connected successfully!")
+conn.close()
 # ✅ USER MODEL
 class User(BaseModel):
     email: str
