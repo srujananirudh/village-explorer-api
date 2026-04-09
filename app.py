@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, text
 from pydantic import BaseModel
 import uuid
 
-# ✅ CREATE ONLY ONE APP
+# ✅ CREATE APP
 app = FastAPI(
     title="Village API",
     docs_url="/docs",
@@ -20,31 +20,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ✅ ROOT ROUTE
+# ✅ ROOT
 @app.get("/")
 def home():
     return {"message": "API running 🚀"}
 
-# ⚠️ TEMP LOCAL DB (will change later)
-DATABASE_URL = "postgresql://postgres.ddojoxpahvbchydnwfqc:Srujananirudh8@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres"
+# ✅ ✅ CORRECT DATABASE (POOLER)
+DATABASE_URL = "postgresql://postgres.ddojoxpahvbchydnwfqc:YOUR_PASSWORD@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres"
 
 engine = create_engine(DATABASE_URL)
-conn = engine.connect()
-print("Connected successfully!")
-conn.close()
+
 # ✅ USER MODEL
 class User(BaseModel):
     email: str
     password: str
 
-# ✅ TEMP MEMORY STORAGE
+# ✅ TEMP USERS STORAGE
 users = {}
 
-# ✅ API KEY GENERATION
+# ✅ API KEY
 def generate_api_key():
     return "ak_live_" + uuid.uuid4().hex[:24]
 
-# ✅ API KEY VALIDATION
+# ✅ VERIFY KEY
 def verify_api_key(x_api_key: str = Header(None)):
     for u in users.values():
         if u["api_key"] == x_api_key:
@@ -106,12 +104,3 @@ def villages(state: str, district: str, mandal: str, auth=Depends(verify_api_key
             'SELECT DISTINCT "VILLAGE" FROM locations WHERE "STATE" ILIKE :s AND "DISTRICT" ILIKE :d AND "MANDAL" ILIKE :m'
         ), {"s": f"%{state}%", "d": f"%{district}%", "m": f"%{mandal}%"})
         return {"villages": [r[0] for r in res]}
-
-@app.get("/test-db")
-def test_db():
-    try:
-        with engine.connect() as conn:
-            result = conn.execute(text("SELECT 1"))
-            return {"status": "DB Connected"}
-    except Exception as e:
-        return {"error": str(e)}
