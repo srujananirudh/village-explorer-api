@@ -26,7 +26,7 @@ def home():
     return {"message": "API running 🚀"}
 
 # ⚠️ TEMP LOCAL DB (will change later)
-DATABASE_URL = "postgresql://postgres:Srujananirudh8@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres?sslmode=require"
+DATABASE_URL = "postgresql://postgres.ddojoxpahvbchydnwfqc:Srujananirudh8@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres"
 
 engine = create_engine(DATABASE_URL)
 conn = engine.connect()
