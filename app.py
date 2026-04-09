@@ -26,7 +26,8 @@ def home():
     return {"message": "API running 🚀"}
 
 # ⚠️ TEMP LOCAL DB (will change later)
-DATABASE_URL =postgresql://postgres.ddojoxpahvbchydnwfqc:Srujananirudh8@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres
+DATABASE_URL = "postgresql://postgres:Srujananirudh8@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres?sslmode=require"
+
 engine = create_engine(DATABASE_URL)
 # ✅ USER MODEL
 class User(BaseModel):
