@@ -26,11 +26,9 @@ def home():
     return {"message": "API running 🚀"}
 
 # ⚠️ TEMP LOCAL DB (will change later)
-DATABASE_URL = "postgresql://postgres:Srujananirudh8@db.ddojoxpahvbchydnwfqc.supabase.co:5432/postgres"
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"sslmode": "require"}
-)
+DATABASE_URL = "postgresql://postgres:Srujananirudh8@db.ddojoxpahvbchydnwfqc.supabase.co:5432/postgres?sslmode=require"
+
+engine = create_engine(DATABASE_URL)
 # ✅ USER MODEL
 class User(BaseModel):
     email: str
